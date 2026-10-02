@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="https://trellocdn.com"></script>
+</head>
+<body>
+  <script>
+    TrelloPowerUp.initialize({
+      'card-back-section': function(t, options){
+        return {
+          title: 'Checklist com Prazos',
+          icon: 'https://hyperdev.com',
+          content: {
+            type: 'iframe',
+            url: t.signUrl('./section.html'),
+            height: 250
+          }
+        };
+      }
+    });
+  </script>
+</body>
+</html>
