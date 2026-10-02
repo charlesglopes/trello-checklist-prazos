@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://trellocdn.com">
+  <script src="https://trellocdn.com"></script>
+  <style>
+    .item-linha { display: flex; align-items: center; margin-bottom: 12px; gap: 10px; font-family: sans-serif; }
+    .texto-item { flex-grow: 1; font-size: 14px; color: #172b4d; }
+    .input-data { width: 140px; padding: 4px; border: 1px solid #ced4da; border-radius: 3px; }
+    #btn-salvar { margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div id="checklist-container"></div>
+  <button id="btn-salvar" class="mod-primary">Salvar Prazos</button>
+
+  <script>
+    var t = TrelloPowerUp.iframe();
+
+    t.render(function(){
+      return t.get('card', 'shared', 'prazosChecklist')
+      .then(function(dadosSalvos){
+        dadosSalvos = dadosSalvos || {};
+        
+        // Simulação de itens do checklist vinculados a este painel
+        var itensExemplo = [
+          { id: 'item1', texto: 'Definir escopo inicial' },
+          { id: 'item2', texto: 'Revisar com o cliente' },
+          { id: 'item3', texto: 'Entrega final do projeto' }
+        ];
+
+        var container = document.getElementById('checklist-container');
+        container.innerHTML = '';
+
+        itensExemplo.forEach(function(item) {
+          var prazoAtual = dadosSalvos[item.id] || '';
+          var div = document.createElement('div');
+          div.className = 'item-linha';
+          div.innerHTML = `
+            <input type="checkbox" id="chk-${item.id}">
+            <span class="texto-item">${item.texto}</span>
+            <input type="date" class="input-data" id="date-${item.id}" value="${prazoAtual}">
+          `;
+          container.appendChild(div);
+        });
+      });
+    });
+
+    document.getElementById('btn-salvar').addEventListener('click', function(){
+      var inputs = document.querySelectorAll('.input-data');
+      var novosPrazos = {};
+      
+      inputs.forEach(function(input) {
+        var id = input.id.replace('date-', '');
+        novosPrazos[id] = input.value;
+      });
+
+      t.set('card', 'shared', 'prazosChecklist', novosPrazos)
+      .then(function() {
+         return t.alert({ message: 'Prazos salvos!', duration: 2, display: 'success' });
+      });
+    });
+  </script>
+</body>
+</html>
